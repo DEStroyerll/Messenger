@@ -31,10 +31,6 @@ public class ServerHelper extends Thread {
             try {
                 while (true) {
                     message = inMessage.readLine();
-                    if(message.equals("stop")) {
-                        downService();
-                        break;
-                    }
                     System.out.println("User correspondence history: " + message);
                     for (ServerHelper serverHelper : Server.clientList) {
                         serverHelper.send(message);
@@ -56,7 +52,7 @@ public class ServerHelper extends Thread {
         try {
             outMessage.write(message + "\n");
             outMessage.flush();
-        } catch (IOException ignored) {}
+        } catch (IOException e) {}
     }
 
     /**

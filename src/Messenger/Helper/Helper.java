@@ -11,7 +11,7 @@ public class Helper {
         Server server = new Server();
         Client client = new Client();
 
-        System.out.println("First, start the server and press 1, then start the client and press 2");
+        System.out.println("To start the server press -1-, to start the client press -2-");
         Scanner scanner = new Scanner(System.in);
 
         int value = scanner.nextInt();
@@ -21,7 +21,7 @@ public class Helper {
         } else if(value == 2) {
             client.start();
         } else {
-            System.out.println("You entered wrong number!");
+            System.out.println("You entered an incorrect number, try again!");
         }
     }
 }

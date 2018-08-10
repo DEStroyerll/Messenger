@@ -13,8 +13,8 @@ public class ClientHelper {
     private BufferedWriter outMessage; //запись в сокет
     private BufferedReader readingFromConsole; //чтения с консоли
 
-    private String host; //хост клиента
-    private int port; //порт соединения
+    private String host; //хост клиента для соединения с сервером
+    private int ipAddress; //ip address соединения с сервером
 
     private String userName; //имя клиента
 
@@ -25,14 +25,16 @@ public class ClientHelper {
     /**
      * The constructor takes the host and port number
      * @param host
-     * @param port
+     * @param ipAddress
      */
-    public ClientHelper(String host, int port) {
+    public ClientHelper(String host, int ipAddress) {
         //Подключаемся к серверу
         try {
-            this.clientSocket = new Socket(host, port);
-        } catch (IOException e) {
-            e.printStackTrace();
+            this.clientSocket = new Socket(host, ipAddress);
+            System.out.println("Your connection was successful. The client is running!");
+        } catch (NullPointerException | IOException e) {
+            //Если мы сначала запускаем клиент, нам кинет ошибку исключения
+            System.out.println("Oops! Something went wrong. Try again!");
         }
         try {
             //чтения из сокета, запись в сокет и чтения из консоли
@@ -43,17 +45,13 @@ public class ClientHelper {
             this.pressNickname();
             new ReadMessage().start();
             new WriteMessage().start();
-        } catch (IOException e) {
-            downService();
-        }
-
+        } catch (NullPointerException | IOException e) { }
     }
 
     /**
      * The method in which the user enters a name and then sends it to the server
      */
     private void pressNickname() {
-        System.out.println("Messenger.Client started!");
         System.out.print("Enter your name please: ");
         try {
             userName = readingFromConsole.readLine();
@@ -90,10 +88,6 @@ public class ClientHelper {
                 while (true) {
                     //Ждем сообщение с сервера
                     message = inMessage.readLine();
-                    if (message.equals("stop")) {
-                        downService();
-                        break;
-                    }
                     System.out.println(message);
                 }
             } catch (IOException e) {
@@ -119,6 +113,12 @@ public class ClientHelper {
                     userString = readingFromConsole.readLine();
                     outMessage.write("(" + time + ") " + userName + ": " + userString + "\n");
                     outMessage.flush();
+                    //Если пользователь ввел символ Q он выходит из чата
+                    //TODO нужно додумать реализацию выхода из чата клиента
+                    if(userString.equals("Q")) {
+                        downService();
+                        System.out.println("Пользователь " + userName + " покинул чат!");
+                    }
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
